@@ -1,0 +1,187 @@
+<?php $_order = $this->getOrder() ?>
+<div class="my-account">
+    <div class="page-title title-buttons">
+        <h1><?php echo $this->__('Order #%s - %s', $_order->getRealOrderId(), $_order->getStatusLabel()) ?></h1>
+        <a onclick="this.target='_blank';" class="link-print" href="<?php echo $this->getPrintUrl(); ?>">Print Order</a>
+    </div>
+    <dl class="order-info">
+        <dt><?php echo $this->__('About This Order:') ?></dt>
+        <dd>
+            <ul id="order-info-tabs">
+                <li class="current first last"><?php echo $this->__('Order Information')?></li>
+            </ul>
+            <script type="text/javascript">decorateGeneric($('order-info-tabs').select('LI'),['first','last']);</script>
+        </dd>
+    </dl>
+    <p class="order-date"><?php echo $this->__('Order Date: %s', $this->formatDate($_order->getCreatedAtStoreDate(), 'long')) ?></p>
+    <div class="col2-set order-info-box">
+        <div class="col-1">
+            <div class="box">
+                <div class="box-title">
+                <h2><?php echo $this->__('Shipping Address')?></h2>
+                </div>
+                <div class="box-content">
+                    <address><?php echo $_order->getShippingAddress()->format('html') ?></address>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="box">
+                <div class="box-title">
+                    <h2><?php echo $this->__('Shipping Method') ?></h2>
+                </div>
+                <div class="box-content">
+                    <?php if ($_order->getShippingDescription()): ?>
+                        <?php echo $this->escapeHtml($_order->getShippingDescription()) ?>
+                    <?php else: ?>
+                        <p><?php echo $this->helper('sales')->__('No shipping information available'); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col2-set order-info-box">
+        <div class="col-1">
+            <div class="box">
+                <div class="box-title">
+                    <h2><?php echo $this->__('Billing Address') ?></h2>
+                </div>
+                <div class="box-content">
+                    <address><?php echo $_order->getBillingAddress()->format('html') ?></address>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="box box-payment">
+                <div class="box-title">
+                    <h2><?php echo $this->__('Payment Method')?></h2>
+                </div>
+                <div class="box-content">
+                    <?php echo $this->getPaymentInfoHtml() ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="order-items order-details">
+        <script type="text/javascript">
+        //&lt;![CDATA[
+        function giftMessageToogle(giftMessageIdentifier)
+        {
+        var link = $('order-item-gift-message-link-'+giftMessageIdentifier);
+        var container = $('order-item-gift-message-'+giftMessageIdentifier);
+        var row = $('order-item-row-'+giftMessageIdentifier);
+        if(link.expanded) {
+        link.expanded = false;
+        link.removeClassName('expanded');
+        if(container.hasClassName('last')) {
+        row.addClassName('last');
+        }
+        container.hide();
+        } else {
+        link.expanded = true;
+        link.addClassName('expanded');
+        if(container.hasClassName('last')) {
+        row.removeClassName('last');
+        }
+        container.show();
+        }
+
+        return false;
+        }
+        //]]&gt;
+        </script>
+        <h2 class="table-caption"><?php echo $this->__('Items Ordered') ?></h2>
+
+        <table class="data-table" id="my-orders-table" summary="<?php echo $this->__('Items Ordered') ?>">
+            <col />
+            <col width="1" />
+            <col width="1" />
+            <col width="1" />
+            <col width="1" />
+            <thead>
+            <tr>
+                <th><?php echo $this->__('Product Name') ?></th>
+                <th><?php echo $this->__('SKU') ?></th>
+                <th class="a-right"><?php echo $this->__('Price') ?></th>
+                <th class="a-center"><?php echo $this->__('Qty') ?></th>
+                <th class="a-right"><?php echo $this->__('Subtotal') ?></th>
+            </tr>
+            </thead>
+            <tfoot>
+                <tr class="subtotal first">
+                    <td class="a-right" colspan="4"><?php echo $this->__('Subtotal')?></td>
+                    <td class="last a-right">
+                        <span class="price"><?php echo Mage::helper('core')->formatPrice($_order->getSubtotal())?></span>
+                    </td>
+                </tr>
+                <tr class="shipping">
+                    <td class="a-right" colspan="4"><?php echo $this->__('Shipping &amp; Handling')?></td>
+                    <td class="last a-right">
+                        <span class="price"><?php echo Mage::helper('core')->formatPrice($_order->getShippingAmount())?></span>
+                    </td>
+                </tr>
+                <tr class="shipping">
+                    <td class="a-right" colspan="4"><?php echo $this->__('Tax')?></td>
+                    <td class="last a-right">
+                        <span class="price"><?php echo Mage::helper('core')->formatPrice($_order->getTaxAmount())?></span>
+                    </td>
+                </tr>
+                <tr class="grand_total last">
+                    <td class="a-right" colspan="4">
+                        <strong><?php echo $this->__('Grand Total')?></strong>
+                    </td>
+                    <td class="last a-right">
+                    <strong><span class="price"><?php echo Mage::helper('core')->formatPrice($_order->getGrandTotal())?></span></strong>
+                    </td>
+                </tr>
+            </tfoot>
+        <?php $_items = $this->getOrderFromImportItems(); ?>
+        <?php $_index = 0; ?>
+        <?php $_count = $_items->count(); ?>
+        <?php foreach ($_items as $_item): ?>
+
+            <tbody>
+            <tr class="border<?php echo ($_index++ > $_count ?' last':'') ?>" id="order-item-row-<?php echo $_item->getId() ?>">
+                <td>
+                    <h3 class="product-name">
+                        <?php echo $_item->getItemName()?>
+                        <dl class="item-options">
+                            <!--put some options-->
+                            </dl>
+                    </td>
+                    <td data-rwd-label="SKU"><?php echo $_item->getItemSku() ?></td>
+                    <td data-rwd-label="Price" class="a-right">
+                        <span class="price-excl-tax">
+                            <span class="cart-price">
+                                <span class="price"><?php echo Mage::helper('core')->formatPrice($_item->getItemPrice())?></span>
+                            </span>
+                        </span>
+                        <br>
+                    </td>
+                    <td data-rwd-label="Qty" class="a-right">
+                        <span class="nobr">
+                            <?php echo $this->__('Ordered')?>: <strong><?php echo $_item->getItemQtyOrdered()*1?></strong><br>
+                        </span>
+                    </td>
+                    <td data-rwd-label="Subtotal" class="a-right last">
+                    <span class="price-excl-tax">
+                        <span class="cart-price">
+                            <span class="price"><?php echo Mage::helper('core')->formatPrice($_item->getItemRowTotal()) ?></span>
+                        </span>
+                    </span>
+                    <br>
+                    </td>
+                    <!--
+                    <th class="a-right"><span class="price">$455.00</span></th>
+                    -->
+                </tr>
+            </tbody>
+        <?php endforeach; ?>
+        </table>
+        <script type="text/javascript">decorateTable('my-orders-table', {'tbody' : ['odd', 'even'], 'tbody tr' : ['first', 'last']})</script>
+
+        <div class="buttons-set">
+            <p class="back-link"><a href="<?php echo $this->getBackUrl() ?>"><small>&laquo; </small><?php echo $this->getBackTitle() ?></a></p>
+        </div>
+    </div>
+</div>

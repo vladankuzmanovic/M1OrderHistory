@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Kuzman_OrderHistory>
+            <codePool>local</codePool>
+            <active>true</active>
+        </Kuzman_OrderHistory>
+    </modules>
+</config>

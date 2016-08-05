@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<layout>
+    <sales_order_old>
+        <label>Customer My Account Order View</label>
+        <update handle="customer_account"/>
+        <reference name="my.account.wrapper">
+            <block type="kuzmanorders/order_history_view" as="old_info" name="sales.old.info" template="kuzmanorders/old/history/view.phtml"></block>
+        </reference>
+        <reference name="sales.old.info">
+            <action method="addLink" translate="label" module="sales"><name>view</name><path></path><label>Order Information</label></action>
+        </reference>
+    </sales_order_old>
+    <sales_order_printold>
+        <label>Sales Order Print View</label>
+        <reference name="content">
+            <block type="kuzmanorders/order_history_print" name="sales.old.print" template="kuzmanorders/old/history/print.phtml" />
+        </reference>
+    </sales_order_printold>
+</layout>
